@@ -1,0 +1,2 @@
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Debug\lathe.exe
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Debug\lathe.pdb
