@@ -1,0 +1,92 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 17.02.2012 15:57:46
+
+newmtl wood_lathe_motor_logo
+	Ns 30.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
+	map_Ka wood_lathe_motor_sticker.jpg
+	map_Kd wood_lathe_motor_sticker.jpg
+
+newmtl wood_lathe_metal
+	Ns 33.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 0.6118 0.6118 0.6118
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
+
+newmtl wood_lathe_button
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.6471 0.2235 0.1922
+	Kd 0.6471 0.2235 0.1922
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka wood_lathe_button.jpg
+	map_Kd wood_lathe_button.jpg
+
+newmtl wood_lathe_chrome_metal
+	Ns 33.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 0.9490 0.9490 0.9490
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
+
+newmtl wood_lathe_cast_iron
+	Ns 9.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 0.4196 0.4196 0.4196
+	Ks 0.5130 0.5130 0.5130
+	Ke 0.0000 0.0000 0.0000
+
+newmtl wood_lathe_green_base
+	Ns 30.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000
+	map_Ka wood_lathe_green_metal.jpg
+	map_Kd wood_lathe_green_metal.jpg
+
+newmtl wood_lathe_black_plastic
+	Ns 31.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 0.0706 0.0706 0.0706
+	Ks 0.5400 0.5400 0.5400
+	Ke 0.0000 0.0000 0.0000

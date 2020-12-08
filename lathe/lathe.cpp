@@ -90,9 +90,7 @@ int main()
     // -----------
     Model ourModel("./resources/objects/nanosuit/nanosuit.obj");
     //Model ourModel("./resources/objects/Miku/Gemstone Miku 1.0.1.obj");
-    //Model ourModel("./resources/objects/攷楉楈柌/楈柌v2.obj");
-    //Model ourModel("./resources/teapot.obj");
-    //Model ourModel("./resources/objects/ironman/IronMan.obj");
+    //Model ourModel("./resources/objects/lathe/lathe.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -255,15 +253,16 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
-        ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        ourShader.setVec3("lightPos", lightPos);
-
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f,0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        //model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));//rotate
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));//rotate
         ourShader.setMat4("model", model);
-
+        ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        ourShader.setVec3("lightPos", lightPos);
+       
         ourModel.Draw(ourShader);
 
 
