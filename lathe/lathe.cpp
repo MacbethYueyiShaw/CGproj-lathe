@@ -12,11 +12,16 @@
 #include "include/camera.h"
 #include "include/skybox.h"
 
+//////////////////////////////////////////////FUNCTION//////////////////////////////////////////////
+//tool func: global setting and control
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
-
+//shader func: draw meshes
+void skybox_draw(Shader skyboxShader, unsigned int skyboxVAO, unsigned int cubemapTexture);
+void draw(Shader shader, Model mymodel, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotate_axe = glm::vec3(0.0f, 1.0f, 0.0f), float radians = 0.0f);
+///////////////////////////////////////////GLOBAL VALUE/////////////////////////////////////////////
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -81,16 +86,15 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    //Shader ourShader("./shader/1.model_loading.vs", "./shader/1.model_loading.fs");
     Shader ourShader("./shaders/vs.shader", "./shaders/fs.shader");
     Shader lightCubeShader("./shaders/light_cube.vs", "./shaders/light_cube.fs");
     Shader skyboxShader("./shaders/6.1.skybox.vs", "./shaders/6.1.skybox.fs");
 
     // load models
     // -----------
-    Model ourModel("./resources/objects/nanosuit/nanosuit.obj");
+    //Model ourModel("./resources/objects/nanosuit/nanosuit.obj");
     //Model ourModel("./resources/objects/Miku/Gemstone Miku 1.0.1.obj");
-    //Model ourModel("./resources/objects/lathe/lathe.obj");
+    Model ourModel("./resources/objects/lathe/lathe.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -245,26 +249,14 @@ int main()
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // don't forget to enable shader before setting uniforms
-        ourShader.use();
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
-        // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f,0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f));	// it's a bit too big for our scene, so scale it down
-        //model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));//rotate
-        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));//rotate
-        ourShader.setMat4("model", model);
-        ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        ourShader.setVec3("lightPos", lightPos);
-        ourShader.setVec3("viewPos", camera.Position);
-       
-        ourModel.Draw(ourShader);
+  
+        //draw lathe
+        draw(ourShader,ourModel, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.1f), glm::vec3(1.0f, 0.0f, 0.0f), -90.0f);
 
 
         // also draw the lamp object
@@ -279,19 +271,8 @@ int main()
         glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        // draw skybox as last
-        glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-        skyboxShader.use();
-        view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-        skyboxShader.setMat4("view", view);
-        skyboxShader.setMat4("projection", projection);
-        // skybox cube
-        glBindVertexArray(skyboxVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glBindVertexArray(0);
-        glDepthFunc(GL_LESS); // set depth function back to default
+        //draw skybox
+        skybox_draw(skyboxShader,skyboxVAO, cubemapTexture);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -356,4 +337,52 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(yoffset);
+}
+//skybox
+void skybox_draw(Shader skyboxShader, unsigned int skyboxVAO, unsigned int cubemapTexture)
+{
+    // draw skybox as last
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+
+    glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+    skyboxShader.use();
+    view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+    skyboxShader.setMat4("view", view);
+    skyboxShader.setMat4("projection", projection);
+    // skybox cube
+    glBindVertexArray(skyboxVAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+    glDepthFunc(GL_LESS); // set depth function back to default
+}
+//draw shader
+void draw(Shader shader,Model mymodel, glm::vec3 position, glm::vec3 scale , glm::vec3 rotate_axe, float radians)
+{
+    // don't forget to enable shader before setting uniforms
+    shader.use();
+
+    //import global values
+    shader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    shader.setVec3("lightPos", lightPos);
+    shader.setVec3("viewPos", camera.Position);
+
+    // view/projection transformations
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+    shader.setMat4("projection", projection);
+    shader.setMat4("view", view);
+
+    // render the loaded model
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, position);
+    model = glm::scale(model, scale);
+    model = glm::rotate(model, glm::radians(radians), rotate_axe);
+
+    shader.setMat4("model", model);
+   
+    // draw model with the shader
+    mymodel.Draw(shader);
 }

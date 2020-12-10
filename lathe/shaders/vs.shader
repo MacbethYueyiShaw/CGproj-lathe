@@ -33,7 +33,7 @@ uniform mat4 projection;
 
 void main()
 {
-    //TexCoords = vec2( aTexCoords[0],1- aTexCoords[1]);//月一哥yyds！
+    //TexCoords = vec2( aTexCoords[0],1- aTexCoords[1]);//反转uv
     TexCoords = vec2(aTexCoords[0], aTexCoords[1]);
     gl_Position = projection * view * model * vec4(aPos, 1.0);
     FragPos = vec3(model * vec4(aPos, 1.0));
