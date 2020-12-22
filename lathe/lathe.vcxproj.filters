@@ -18,4 +18,14 @@
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\6.1.skybox.fs" />
+    <None Include="shaders\6.1.skybox.vs" />
+    <None Include="shaders\cylinder.fs" />
+    <None Include="shaders\cylinder.vs" />
+    <None Include="shaders\fs.shader" />
+    <None Include="shaders\light_cube.fs" />
+    <None Include="shaders\light_cube.vs" />
+    <None Include="shaders\vs.shader" />
+  </ItemGroup>
 </Project>

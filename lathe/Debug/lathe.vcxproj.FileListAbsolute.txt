@@ -1,4 +1,4 @@
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Debug\lathe.exe
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Debug\lathe.pdb
 D:\courses\3-1\cg\CGproj-lathe\lathe\Debug\lathe.exe
 D:\courses\3-1\cg\CGproj-lathe\lathe\Debug\lathe.pdb
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Debug\lathe.exe
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Debug\lathe.pdb

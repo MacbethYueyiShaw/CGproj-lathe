@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <vector>
 #include "include/shader.h"
 #include "include/model.h"
 #include "include/camera.h"
@@ -20,7 +21,10 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 //shader func: draw meshes
 void skybox_draw(Shader skyboxShader, unsigned int skyboxVAO, unsigned int cubemapTexture);
-void draw(Shader shader, Model mymodel, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotate_axe = glm::vec3(0.0f, 1.0f, 0.0f), float radians = 0.0f);
+void model_draw(Shader shader, Model mymodel, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotate_axe = glm::vec3(0.0f, 1.0f, 0.0f), float radians = 0.0f);
+//model caculate func
+void cylinder_data_update();
+void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO, GLuint element_buffer_object);
 ///////////////////////////////////////////GLOBAL VALUE/////////////////////////////////////////////
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -39,6 +43,16 @@ glm::vec3 lightPos(0.0f, 5.0f, -10.0f);
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+// cylinder data config
+const GLfloat PI = 3.14159265358979323846f;
+const float radius = 0.5;
+std::vector<float> cylinderVertices;
+std::vector<int> cylinderIndices;
+//将球横纵划分成150*150的网格
+const int Y_SEGMENTS = 100;
+const int X_SEGMENTS = 20;
+
+////////////////////////////////////////////////MAIN/////////////////////////////////////////////////
 int main()
 {
     // glfw: initialize and configure
@@ -82,23 +96,27 @@ int main()
 
     // configure global opengl state
     // -----------------------------
+    // draw in wireframe
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
 
+
+    ////////////////////////////////////////////LOAD_DATA///////////////////////////////////////////////////
     // build and compile shaders
     // -------------------------
     Shader ourShader("./shaders/vs.shader", "./shaders/fs.shader");
     Shader lightCubeShader("./shaders/light_cube.vs", "./shaders/light_cube.fs");
     Shader skyboxShader("./shaders/6.1.skybox.vs", "./shaders/6.1.skybox.fs");
-
+    Shader cylinderShader("./shaders/cylinder.vs", "./shaders/cylinder.fs");
     // load models
     // -----------
     //Model ourModel("./resources/objects/nanosuit/nanosuit.obj");
-    //Model ourModel("./resources/objects/Miku/Gemstone Miku 1.0.1.obj");
+    //Model ourModel("./resources/objects/Miku/Gemstone Miku 1.0.1.obj"); //*if you use this mesh, please modify the uv config in the "fs.shader"*
     Model ourModel("./resources/objects/lathe/lathe.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float vertices[] = {
+    float light_vertices[] = {
        -0.5f, -0.5f, -0.5f,
         0.5f, -0.5f, -0.5f,
         0.5f,  0.5f, -0.5f,
@@ -185,6 +203,9 @@ int main()
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f
     };
+
+    cylinder_data_update();
+    ////////////////////////////////////////////BIND VAO/VBO/EBO//////////////////////////////////////////////
     // skybox VAO
     unsigned int skyboxVAO, skyboxVBO;
     glGenVertexArrays(1, &skyboxVAO);
@@ -210,13 +231,12 @@ int main()
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
 
-    // draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    
     // first, configure the VBO
     unsigned int VBO;
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(light_vertices), light_vertices, GL_STATIC_DRAW);
 
     // second, configure the light's VAO
     unsigned int lightCubeVAO;
@@ -225,10 +245,17 @@ int main()
 
     // we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    /*3-数据处理*/
+    unsigned int cylinderVBO, cylinderVAO;
+    /*3-数据处理*/
+    glGenVertexArrays(1, &cylinderVAO);
+    glGenBuffers(1, &cylinderVBO);
+    GLuint element_buffer_object;//EBO
+    glGenBuffers(1, &element_buffer_object);
+    cylinder_buffer_update(cylinderVAO, cylinderVBO, element_buffer_object);
 
     // render loop
     // -----------
@@ -256,8 +283,24 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
   
         //draw lathe
-        draw(ourShader,ourModel, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.1f), glm::vec3(1.0f, 0.0f, 0.0f), -90.0f);
+        model_draw(ourShader,ourModel, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.1f), glm::vec3(1.0f, 0.0f, 0.0f), -90.0f);
 
+        //draw cylinder
+        cylinderShader.use();
+        cylinderShader.setMat4("projection", projection);
+        cylinderShader.setMat4("view", view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-2.0f, 5.0f, -0.5f));
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));//x轴控制轴心自转
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(0.5f)); // a smaller cube
+        cylinderShader.setMat4("model", model);
+        //绘制球
+        //开启面剔除(只需要展示一个面，否则会有重合)
+        //glEnable(GL_CULL_FACE);
+        //glCullFace(GL_BACK);
+        glBindVertexArray(cylinderVAO);
+        glDrawElements(GL_TRIANGLES, X_SEGMENTS* Y_SEGMENTS * 6, GL_UNSIGNED_INT, 0);
 
         // also draw the lamp object
         lightCubeShader.use();
@@ -267,7 +310,6 @@ int main()
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
         lightCubeShader.setMat4("model", model);
-
         glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -282,6 +324,14 @@ int main()
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
+    glDeleteVertexArrays(1, &skyboxVAO);
+    glDeleteVertexArrays(1, &lightCubeVAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &skyboxVBO);
+    glDeleteVertexArrays(1, &cylinderVAO);
+    glDeleteBuffers(1, &cylinderVBO);
+    glDeleteBuffers(1, &element_buffer_object);
+
     glfwTerminate();
     return 0;
 }
@@ -292,7 +342,6 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -301,6 +350,9 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -359,7 +411,7 @@ void skybox_draw(Shader skyboxShader, unsigned int skyboxVAO, unsigned int cubem
     glDepthFunc(GL_LESS); // set depth function back to default
 }
 //draw shader
-void draw(Shader shader,Model mymodel, glm::vec3 position, glm::vec3 scale , glm::vec3 rotate_axe, float radians)
+void model_draw(Shader shader,Model mymodel, glm::vec3 position, glm::vec3 scale , glm::vec3 rotate_axe, float radians)
 {
     // don't forget to enable shader before setting uniforms
     shader.use();
@@ -385,4 +437,93 @@ void draw(Shader shader,Model mymodel, glm::vec3 position, glm::vec3 scale , glm
    
     // draw model with the shader
     mymodel.Draw(shader);
+}
+//caculate the vertex and anormal vec of target cylinder
+void cylinder_data_update()
+{
+    cylinderIndices.clear();
+    cylinderVertices.clear();
+    //draw a sphere
+    /*
+    for (int y = 0; y <= Y_SEGMENTS; y++)
+    {
+        for (int x = 0; x <= X_SEGMENTS; x++)
+        {
+            float xSegment = (float)x / (float)X_SEGMENTS;
+            float ySegment = (float)y / (float)Y_SEGMENTS;
+            float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+            float yPos = std::cos(ySegment * PI);
+            float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+            cylinderVertices.push_back(xPos);
+            cylinderVertices.push_back(yPos);
+            cylinderVertices.push_back(zPos);
+            std::cout <<y* X_SEGMENTS + x<<": "<< xPos << " " << yPos << " "<< zPos<< std::endl;
+        }
+    }
+    for (int i = 0; i < Y_SEGMENTS; i++)
+    {
+        for (int j = 0; j < X_SEGMENTS; j++)
+        {
+            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j);
+            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j);
+            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j + 1);
+            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j);
+            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j + 1);
+            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j + 1);
+        }
+    }*/
+    //draw cylinder
+    for (int y = 0; y <= Y_SEGMENTS; y++)
+    {
+        for (int x = 0; x <= X_SEGMENTS; x++)
+        {
+            float xSegment = (float)x / (float)X_SEGMENTS;
+            float ySegment = (float)y / (float)Y_SEGMENTS;
+            float xPos = radius * std::cos(xSegment * 2.0f * PI);
+            float yPos = 2.0f* ySegment -1.0f;
+            float zPos = radius * std::sin(xSegment * 2.0f * PI);
+            if (y == 0 || y == Y_SEGMENTS) {
+                xPos = 0;
+                zPos = 0;
+            }
+            cylinderVertices.push_back(xPos);
+            cylinderVertices.push_back(yPos);
+            cylinderVertices.push_back(zPos);
+            //std::cout << y * X_SEGMENTS + x << ": " << xPos << " " << yPos << " " << zPos << std::endl;
+        }
+    }
+    for (int i = 0; i < Y_SEGMENTS; i++)
+    {
+        for (int j = 0; j < X_SEGMENTS; j++)
+        {
+            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j);
+            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j);
+            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j + 1);
+            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j);
+            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j + 1);
+            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j + 1);
+        }
+    }
+}
+//update cylinder's VAO,VBO,EBO
+void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO, GLuint element_buffer_object)
+{
+    
+    //生成并绑定球体的VAO和VBO
+    glBindVertexArray(cylinderVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, cylinderVBO);
+    //将顶点数据绑定至当前默认的缓冲中
+    glBufferData(GL_ARRAY_BUFFER, cylinderVertices.size() * sizeof(float), &cylinderVertices[0], GL_STATIC_DRAW);
+
+  
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_object);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, cylinderIndices.size() * sizeof(int), &cylinderIndices[0], GL_STATIC_DRAW);
+
+    //设置顶点属性指针
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    //解绑VAO和VBO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
