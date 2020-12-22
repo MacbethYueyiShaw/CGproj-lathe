@@ -22,6 +22,9 @@ void processInput(GLFWwindow* window);
 //shader func: draw meshes
 void skybox_draw(Shader skyboxShader, unsigned int skyboxVAO, unsigned int cubemapTexture);
 void model_draw(Shader shader, Model mymodel, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotate_axe = glm::vec3(0.0f, 1.0f, 0.0f), float radians = 0.0f);
+//model caculate func
+void cylinder_data_update();
+void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO, GLuint element_buffer_object);
 ///////////////////////////////////////////GLOBAL VALUE/////////////////////////////////////////////
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -200,34 +203,7 @@ int main()
          1.0f, -1.0f,  1.0f
     };
 
-    for (int y = 0; y <= Y_SEGMENTS; y++)
-    {
-        for (int x = 0; x <= X_SEGMENTS; x++)
-        {
-            float xSegment = (float)x / (float)X_SEGMENTS;
-            float ySegment = (float)y / (float)Y_SEGMENTS;
-            float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-            float yPos = std::cos(ySegment * PI);
-            float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-            cylinderVertices.push_back(xPos);
-            cylinderVertices.push_back(yPos);
-            cylinderVertices.push_back(zPos);
-        }
-    }
-
-    //生成圆柱的Indices
-    for (int i = 0; i < Y_SEGMENTS; i++)
-    {
-        for (int j = 0; j < X_SEGMENTS; j++)
-        {
-            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j);
-            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j);
-            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j + 1);
-            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j);
-            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j + 1);
-            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j + 1);
-        }
-    }
+    cylinder_data_update();
     ////////////////////////////////////////////BIND VAO/VBO/EBO//////////////////////////////////////////////
     // skybox VAO
     unsigned int skyboxVAO, skyboxVBO;
@@ -273,26 +249,12 @@ int main()
 
     /*3-数据处理*/
     unsigned int cylinderVBO, cylinderVAO;
+    /*3-数据处理*/
     glGenVertexArrays(1, &cylinderVAO);
     glGenBuffers(1, &cylinderVBO);
-    //生成并绑定球体的VAO和VBO
-    glBindVertexArray(cylinderVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, cylinderVBO);
-    //将顶点数据绑定至当前默认的缓冲中
-    glBufferData(GL_ARRAY_BUFFER, cylinderVertices.size() * sizeof(float), &cylinderVertices[0], GL_STATIC_DRAW);
-
     GLuint element_buffer_object;//EBO
     glGenBuffers(1, &element_buffer_object);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_object);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, cylinderIndices.size() * sizeof(int), &cylinderIndices[0], GL_STATIC_DRAW);
-
-    //设置顶点属性指针
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    //解绑VAO和VBO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    cylinder_buffer_update(cylinderVAO, cylinderVBO, element_buffer_object);
 
     // render loop
     // -----------
@@ -377,7 +339,6 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -386,6 +347,9 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -470,4 +434,60 @@ void model_draw(Shader shader,Model mymodel, glm::vec3 position, glm::vec3 scale
    
     // draw model with the shader
     mymodel.Draw(shader);
+}
+//caculate the vertex and anormal vec of target cylinder
+void cylinder_data_update()
+{
+    cylinderIndices.clear();
+    cylinderVertices.clear();
+    for (int y = 0; y <= Y_SEGMENTS; y++)
+    {
+        for (int x = 0; x <= X_SEGMENTS; x++)
+        {
+            float xSegment = (float)x / (float)X_SEGMENTS;
+            float ySegment = (float)y / (float)Y_SEGMENTS;
+            float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+            float yPos = std::cos(ySegment * PI);
+            float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+            cylinderVertices.push_back(xPos);
+            cylinderVertices.push_back(yPos);
+            cylinderVertices.push_back(zPos);
+        }
+    }
+
+    //生成圆柱的Indices
+    for (int i = 0; i < Y_SEGMENTS; i++)
+    {
+        for (int j = 0; j < X_SEGMENTS; j++)
+        {
+            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j);
+            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j);
+            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j + 1);
+            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j);
+            cylinderIndices.push_back((i + 1) * (X_SEGMENTS + 1) + j + 1);
+            cylinderIndices.push_back(i * (X_SEGMENTS + 1) + j + 1);
+        }
+    }
+}
+//update cylinder's VAO,VBO,EBO
+void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO, GLuint element_buffer_object)
+{
+    
+    //生成并绑定球体的VAO和VBO
+    glBindVertexArray(cylinderVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, cylinderVBO);
+    //将顶点数据绑定至当前默认的缓冲中
+    glBufferData(GL_ARRAY_BUFFER, cylinderVertices.size() * sizeof(float), &cylinderVertices[0], GL_STATIC_DRAW);
+
+  
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_object);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, cylinderIndices.size() * sizeof(int), &cylinderIndices[0], GL_STATIC_DRAW);
+
+    //设置顶点属性指针
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    //解绑VAO和VBO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
