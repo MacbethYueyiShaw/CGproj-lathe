@@ -1,0 +1,21 @@
+﻿  glad.c
+  lathe.cpp
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\include\shader.h(56,40): warning C4101: “e”: 未引用的局部变量
+D:\OpenGL\include\mesh.h(85,1): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(239,28): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(321,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(322,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(326,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(327,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(329,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(330,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(339,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+lathe.obj : error LNK2019: 无法解析的外部符号 "public: __cdecl Assimp::Importer::Importer(void)" (??0Importer@Assimp@@QEAA@XZ)，函数 "private: void __cdecl Model::loadModel(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?loadModel@Model@@AEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) 中引用了该符号
+lathe.obj : error LNK2019: 无法解析的外部符号 "public: __cdecl Assimp::Importer::~Importer(void)" (??1Importer@Assimp@@QEAA@XZ)，函数 "private: void __cdecl Model::loadModel(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?loadModel@Model@@AEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) 中引用了该符号
+lathe.obj : error LNK2019: 无法解析的外部符号 "public: struct aiScene const * __cdecl Assimp::Importer::ReadFile(char const *,unsigned int)" (?ReadFile@Importer@Assimp@@QEAAPEBUaiScene@@PEBDI@Z)，函数 "public: struct aiScene const * __cdecl Assimp::Importer::ReadFile(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &,unsigned int)" (?ReadFile@Importer@Assimp@@QEAAPEBUaiScene@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@I@Z) 中引用了该符号
+lathe.obj : error LNK2019: 无法解析的外部符号 "public: char const * __cdecl Assimp::Importer::GetErrorString(void)const " (?GetErrorString@Importer@Assimp@@QEBAPEBDXZ)，函数 "private: void __cdecl Model::loadModel(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?loadModel@Model@@AEAAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) 中引用了该符号
+lathe.obj : error LNK2019: 无法解析的外部符号 aiGetMaterialTextureCount，函数 "public: unsigned int __cdecl aiMaterial::GetTextureCount(enum aiTextureType)const " (?GetTextureCount@aiMaterial@@QEBAIW4aiTextureType@@@Z) 中引用了该符号
+lathe.obj : error LNK2019: 无法解析的外部符号 aiGetMaterialTexture，函数 "public: enum aiReturn __cdecl aiMaterial::GetTexture(enum aiTextureType,unsigned int,struct aiString *,enum aiTextureMapping *,unsigned int *,float *,enum aiTextureOp *,enum aiTextureMapMode *)const " (?GetTexture@aiMaterial@@QEBA?AW4aiReturn@@W4aiTextureType@@IPEAUaiString@@PEAW4aiTextureMapping@@PEAIPEAMPEAW4aiTextureOp@@PEAW4aiTextureMapMode@@@Z) 中引用了该符号
+D:\OpenGL\Libs\glfw3dll.lib : warning LNK4272: 库计算机类型“x86”与目标计算机类型“x64”冲突
+D:\OpenGL\Libs\assimp-vc142-mtd.lib : warning LNK4272: 库计算机类型“x86”与目标计算机类型“x64”冲突
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\x64\Debug\lathe.exe : fatal error LNK1120: 6 个无法解析的外部命令

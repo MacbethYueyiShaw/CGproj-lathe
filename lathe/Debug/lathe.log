@@ -1,11 +1,11 @@
 ﻿  lathe.cpp
-D:\courses\3-1\cg\CGproj-lathe\lathe\include\shader.h(56,40): warning C4101: “e”: 未引用的局部变量
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(239,28): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(321,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(322,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(326,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(327,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(329,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(330,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(339,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-  lathe.vcxproj -> D:\courses\3-1\cg\CGproj-lathe\lathe\Debug\lathe.exe
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\include\shader.h(56,40): warning C4101: “e”: 未引用的局部变量
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(240,28): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(322,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(323,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(327,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(328,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(330,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(331,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(340,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+  lathe.vcxproj -> C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Debug\lathe.exe
