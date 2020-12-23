@@ -157,6 +157,8 @@
     <None Include="shaders\cylinder.fs" />
     <None Include="shaders\cylinder.vs" />
     <None Include="shaders\fs.shader" />
+    <None Include="shaders\knife.fs" />
+    <None Include="shaders\knife.vs" />
     <None Include="shaders\light_cube.fs" />
     <None Include="shaders\light_cube.vs" />
     <None Include="shaders\vs.shader" />

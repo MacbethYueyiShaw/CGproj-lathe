@@ -27,5 +27,7 @@
     <None Include="shaders\light_cube.fs" />
     <None Include="shaders\light_cube.vs" />
     <None Include="shaders\vs.shader" />
+    <None Include="shaders\knife.fs" />
+    <None Include="shaders\knife.vs" />
   </ItemGroup>
 </Project>

@@ -13,6 +13,13 @@
 #include "include/camera.h"
 #include "include/skybox.h"
 
+/*
+Proj:A Lathe Simulator by openGL
+Author: Macbeth Yueyi Shaw
+Time: Dec/2020
+*/
+//对的这个代码注释就是中西合璧
+
 //////////////////////////////////////////////FUNCTION//////////////////////////////////////////////
 //tool func: global setting and control
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -23,6 +30,7 @@ void processInput(GLFWwindow* window);
 void skybox_draw(Shader skyboxShader, unsigned int skyboxVAO, unsigned int cubemapTexture);
 void model_draw(Shader shader, Model mymodel, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotate_axe = glm::vec3(0.0f, 1.0f, 0.0f), float radians = 0.0f);
 //model caculate func
+void cylinder_radius_vector_init();
 void cylinder_data_update();
 void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO, GLuint element_buffer_object);
 ///////////////////////////////////////////GLOBAL VALUE/////////////////////////////////////////////
@@ -44,14 +52,22 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // cylinder data config
-const GLfloat PI = 3.14159265358979323846f;
-const float radius_k = 0.5;
-std::vector<float> cylinderVertices;
-std::vector<int> cylinderIndices;
-//将球横纵划分成150*150的网格
+//点阵精细度设置
 const int Y_SEGMENTS = 100;
 const int X_SEGMENTS = 20;
-int radius[Y_SEGMENTS] = {0};
+//空间参数设置
+const GLfloat PI = 3.14159265358979323846f;
+const glm::vec3 cylinder_pos=glm::vec3(-2.0f, 5.0f, -0.5f);//空间位置
+const float rotate_speed = 5.0f;//圆柱转速倍率
+const float radius_k = 0.5f;//半径系数，用于调节整个圆柱的半径
+const float length_k = 2.0f;//半径系数，用于调节整个圆柱的长度
+float radius[Y_SEGMENTS + 1] = { 0.0f };//半径数组，记录对应segment位置圆柱的半径，用于记录切削效果
+std::vector<float> cylinderVertices;//圆柱点集
+std::vector<int> cylinderIndices;//圆柱点绘制index集
+
+//切削刀具设置(刀用一个倒四棱锥表示)
+glm::vec3 knife_pos = glm::vec3(-2.0f, 6.0f, -0.5f);//空间位置
+
 ////////////////////////////////////////////////MAIN/////////////////////////////////////////////////
 int main()
 {
@@ -97,7 +113,7 @@ int main()
     // configure global opengl state
     // -----------------------------
     // draw in wireframe
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
 
 
@@ -108,6 +124,7 @@ int main()
     Shader lightCubeShader("./shaders/light_cube.vs", "./shaders/light_cube.fs");
     Shader skyboxShader("./shaders/6.1.skybox.vs", "./shaders/6.1.skybox.fs");
     Shader cylinderShader("./shaders/cylinder.vs", "./shaders/cylinder.fs");
+    Shader knifeShader("./shaders/knife.vs", "./shaders/knife.fs");
     // load models
     // -----------
     //Model ourModel("./resources/objects/nanosuit/nanosuit.obj");
@@ -203,8 +220,33 @@ int main()
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f
     };
+    float knife_vertices[] = {
+        1.0f,1.0f,1.0f,0.0f,1.0f,0.0f,
+        1.0f,1.0f,-1.0f,0.0f,1.0f,0.0f,
+        -1.0f,1.0f,-1.0f,0.0f,1.0f,0.0f,
+        -1.0f,1.0f,-1.0f,0.0f,1.0f,0.0f,
+        -1.0f,1.0f,1.0f,0.0f,1.0f,0.0f,
+        1.0f,1.0f,1.0f,0.0f,1.0f,0.0f,
 
-    cylinder_data_update();
+        1.0f,1.0f,1.0f,1.0f,-1.0f,0.0f,
+        1.0f,1.0f,-1.0f,1.0f,-1.0f,0.0f,
+        0.0f,-1.0f,0.0f,1.0f,-1.0f,0.0f,
+
+        1.0f,1.0f,1.0f,0.0f,-1.0f,1.0f,
+        -1.0f,1.0f,1.0f,0.0f,-1.0f,1.0f,
+        0.0f,-1.0f,0.0f,0.0f,-1.0f,1.0f,
+
+        -1.0f,1.0f,1.0f,-1.0f,-1.0f,0.0f,
+        -1.0f,1.0f,-1.0f,-1.0f,-1.0f,0.0f,
+        0.0f,-1.0f,0.0f,-1.0f,-1.0f,0.0f,
+
+        -1.0f,1.0f,-1.0f,0.0f,-1.0f,-1.0f,
+        1.0f,1.0f,-1.0f,0.0f,-1.0f,-1.0f,
+        0.0f,-1.0f,0.0f,0.0f,-1.0f,-1.0f,
+    };
+    cylinder_radius_vector_init();//初始化半径集合
+    cylinder_data_update();//依据radius集合生成cylinder点阵数据集，必须在init之后
+    
     ////////////////////////////////////////////BIND VAO/VBO/EBO//////////////////////////////////////////////
     // skybox VAO
     unsigned int skyboxVAO, skyboxVBO;
@@ -231,7 +273,23 @@ int main()
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
 
-    
+    //knife VAO VBO
+    unsigned int knifeVBO, knifeVAO;
+    glGenVertexArrays(1, &knifeVAO);
+    glGenBuffers(1, &knifeVBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, knifeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(knife_vertices), knife_vertices, GL_STATIC_DRAW);
+
+    glBindVertexArray(knifeVAO);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
     // first, configure the VBO
     unsigned int VBO;
     glGenBuffers(1, &VBO);
@@ -248,15 +306,16 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    /*3-数据处理*/
+    /*cylinder数据处理*/
     unsigned int cylinderVBO, cylinderVAO;
-    /*3-数据处理*/
+    /*culinder数据处理*/
     glGenVertexArrays(1, &cylinderVAO);
     glGenBuffers(1, &cylinderVBO);
     GLuint element_buffer_object;//EBO
     glGenBuffers(1, &element_buffer_object);
     cylinder_buffer_update(cylinderVAO, cylinderVBO, element_buffer_object);
 
+    ///////////////////////////////////////////////SHADING/////////////////////////////////////////////////
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -290,9 +349,9 @@ int main()
         cylinderShader.setMat4("projection", projection);
         cylinderShader.setMat4("view", view);
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-2.0f, 5.0f, -0.5f));
-        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));//x轴控制轴心自转
-        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::translate(model, cylinder_pos);
+        model = glm::rotate(model, rotate_speed*(float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));//x轴控制轴心自转
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));//让圆柱水平放置
         model = glm::scale(model, glm::vec3(0.5f)); // a smaller cube
         cylinderShader.setMat4("model", model);
         //绘制球
@@ -301,6 +360,24 @@ int main()
         //glCullFace(GL_BACK);
         glBindVertexArray(cylinderVAO);
         glDrawElements(GL_TRIANGLES, X_SEGMENTS* Y_SEGMENTS * 6, GL_UNSIGNED_INT, 0);
+
+        //draw knife
+        knifeShader.use();
+        knifeShader.setVec3("objectColor", 211.0f / 255.0f, 211.0f / 255.0f, 211.0f / 255.0f);
+        knifeShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        knifeShader.setVec3("lightPos", lightPos);
+        knifeShader.setVec3("viewPos", camera.Position);
+        knifeShader.setMat4("projection", projection);
+        knifeShader.setMat4("view", view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, knife_pos);
+        model = glm::scale(model, glm::vec3(0.5f)); // a smaller cube
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));//rotate
+        knifeShader.setMat4("model", model);
+
+        // render the cube
+        glBindVertexArray(knifeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 22);
 
         // also draw the lamp object
         lightCubeShader.use();
@@ -322,10 +399,13 @@ int main()
         glfwPollEvents();
     }
 
+    /////////////////////////////////////////////END/////////////////////////////////////////////////////////
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glDeleteVertexArrays(1, &skyboxVAO);
     glDeleteVertexArrays(1, &lightCubeVAO);
+    glDeleteVertexArrays(1, &knifeVAO);
+    glDeleteBuffers(1, &knifeVBO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &skyboxVBO);
     glDeleteVertexArrays(1, &cylinderVAO);
@@ -438,6 +518,14 @@ void model_draw(Shader shader,Model mymodel, glm::vec3 position, glm::vec3 scale
     // draw model with the shader
     mymodel.Draw(shader);
 }
+//init radius vector
+void cylinder_radius_vector_init()
+{
+    for (int i = 0; i < Y_SEGMENTS; i++)
+    {
+        radius[i] = 1.0f;
+    }
+}
 //caculate the vertex and anormal vec of target cylinder
 void cylinder_data_update()
 {
@@ -480,9 +568,9 @@ void cylinder_data_update()
         {
             float xSegment = (float)x / (float)X_SEGMENTS;
             float ySegment = (float)y / (float)Y_SEGMENTS;
-            float xPos = radius_k * std::cos(xSegment * 2.0f * PI);
-            float yPos = 2.0f* ySegment -1.0f;
-            float zPos = radius_k * std::sin(xSegment * 2.0f * PI);
+            float xPos = radius_k * radius[y] * std::cos(xSegment * 2.0f * PI);
+            float yPos = length_k * ( 2.0f* ySegment -1.0f );
+            float zPos = radius_k * radius[y] * std::sin(xSegment * 2.0f * PI);
             if (y == 0 || y == Y_SEGMENTS) {
                 xPos = 0;
                 zPos = 0;
