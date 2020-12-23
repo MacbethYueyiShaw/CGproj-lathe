@@ -31,7 +31,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(0.0f, 15.0f, -20.0f));
+Camera camera(glm::vec3(0.0f, 5.0f, -2.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -45,13 +45,13 @@ float lastFrame = 0.0f;
 
 // cylinder data config
 const GLfloat PI = 3.14159265358979323846f;
-const float radius = 0.5;
+const float radius_k = 0.5;
 std::vector<float> cylinderVertices;
 std::vector<int> cylinderIndices;
 //将球横纵划分成150*150的网格
 const int Y_SEGMENTS = 100;
 const int X_SEGMENTS = 20;
-
+int radius[Y_SEGMENTS] = {0};
 ////////////////////////////////////////////////MAIN/////////////////////////////////////////////////
 int main()
 {
@@ -475,13 +475,14 @@ void cylinder_data_update()
     //draw cylinder
     for (int y = 0; y <= Y_SEGMENTS; y++)
     {
+        std::cout <<y << ": " << radius[y] << std::endl;
         for (int x = 0; x <= X_SEGMENTS; x++)
         {
             float xSegment = (float)x / (float)X_SEGMENTS;
             float ySegment = (float)y / (float)Y_SEGMENTS;
-            float xPos = radius * std::cos(xSegment * 2.0f * PI);
+            float xPos = radius_k * std::cos(xSegment * 2.0f * PI);
             float yPos = 2.0f* ySegment -1.0f;
-            float zPos = radius * std::sin(xSegment * 2.0f * PI);
+            float zPos = radius_k * std::sin(xSegment * 2.0f * PI);
             if (y == 0 || y == Y_SEGMENTS) {
                 xPos = 0;
                 zPos = 0;
