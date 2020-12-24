@@ -54,7 +54,7 @@ float lastFrame = 0.0f;
 // cylinder data config
 //点阵精细度设置
 const int Y_SEGMENTS = 100;
-const int X_SEGMENTS = 20;
+const int X_SEGMENTS = 30;
 //空间参数设置
 const GLfloat PI = 3.14159265358979323846f;
 const glm::vec3 cylinder_pos=glm::vec3(-2.0f, 5.0f, -0.5f);//空间位置
@@ -66,7 +66,7 @@ std::vector<float> cylinderVertices;//圆柱点集
 std::vector<int> cylinderIndices;//圆柱点绘制index集
 
 //切削刀具设置(刀用一个倒四棱锥表示)
-glm::vec3 knife_pos = glm::vec3(-2.0f, 6.0f, -0.5f);//空间位置
+glm::vec3 knife_pos = glm::vec3(-2.0f, 5.3f, -0.5f);//空间位置
 
 ////////////////////////////////////////////////MAIN/////////////////////////////////////////////////
 int main()
@@ -362,6 +362,7 @@ int main()
         glDrawElements(GL_TRIANGLES, X_SEGMENTS* Y_SEGMENTS * 6, GL_UNSIGNED_INT, 0);
 
         //draw knife
+        /*
         knifeShader.use();
         knifeShader.setVec3("objectColor", 211.0f / 255.0f, 211.0f / 255.0f, 211.0f / 255.0f);
         knifeShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
@@ -371,10 +372,33 @@ int main()
         knifeShader.setMat4("view", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model, knife_pos);
-        model = glm::scale(model, glm::vec3(0.5f)); // a smaller cube
+        model = glm::scale(model, glm::vec3(0.05f)); // a smaller cube
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));//rotate
         knifeShader.setMat4("model", model);
+        */
+        // light properties
+        knifeShader.use();
+        glm::vec3 lightColor = glm::vec3(1.0f);
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // decrease the influence
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
+        knifeShader.setVec3("light.ambient", ambientColor);
+        knifeShader.setVec3("light.diffuse", diffuseColor);
+        knifeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
+        // material properties
+        knifeShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        knifeShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        knifeShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f); // specular lighting doesn't have full effect on this object's material
+        knifeShader.setFloat("material.shininess", 32.0f);
+
+        // view/projection transformations
+        knifeShader.setMat4("projection", projection);
+        knifeShader.setMat4("view", view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, knife_pos);
+        model = glm::scale(model, glm::vec3(0.05f)); // a smaller cube
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));//rotate
+        knifeShader.setMat4("model", model);
         // render the cube
         glBindVertexArray(knifeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 22);
@@ -563,7 +587,7 @@ void cylinder_data_update()
     //draw cylinder
     for (int y = 0; y <= Y_SEGMENTS; y++)
     {
-        std::cout <<y << ": " << radius[y] << std::endl;
+        //std::cout <<y << ": " << radius[y] << std::endl;
         for (int x = 0; x <= X_SEGMENTS; x++)
         {
             float xSegment = (float)x / (float)X_SEGMENTS;
