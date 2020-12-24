@@ -329,6 +329,7 @@ int main()
         // input
         // -----
         processInput(window);
+        cylinder_buffer_update(cylinderVAO, cylinderVBO, element_buffer_object);
 
         // render
         // ------
@@ -455,7 +456,18 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-
+        for (int i = 0; i < Y_SEGMENTS / 2; i++)
+        {
+            radius[i] *= 2.0f;
+        }
+        cylinder_data_update();
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        for (int i = 0; i < Y_SEGMENTS / 2; i++)
+        {
+            radius[i] *= 0.5f;
+        }
+        cylinder_data_update();
     }
 }
 

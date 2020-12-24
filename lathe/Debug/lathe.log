@@ -1,11 +1,11 @@
 ﻿  lathe.cpp
 D:\courses\3-1\cg\CGproj-lathe\lathe\include\shader.h(56,40): warning C4101: “e”: 未引用的局部变量
 D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(325,28): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(477,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(478,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(482,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(483,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(485,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(486,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(495,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(489,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(490,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(494,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(495,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(497,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(498,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+D:\courses\3-1\cg\CGproj-lathe\lathe\lathe.cpp(507,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
   lathe.vcxproj -> D:\courses\3-1\cg\CGproj-lathe\lathe\Debug\lathe.exe
