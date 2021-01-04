@@ -1,11 +1,11 @@
 ﻿  lathe.cpp
 C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\include\shader.h(56,40): warning C4101: “e”: 未引用的局部变量
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(329,28): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(509,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(510,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(514,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(515,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(517,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(518,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(527,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(351,28): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(577,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(578,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(582,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(583,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(585,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(586,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(595,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
   lathe.vcxproj -> C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Debug\lathe.exe
