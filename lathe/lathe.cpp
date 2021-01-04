@@ -53,8 +53,8 @@ float lastFrame = 0.0f;
 
 // cylinder data config
 //点阵精细度设置
-const int Y_SEGMENTS = 3;
-const int X_SEGMENTS = 3;
+const int Y_SEGMENTS = 300;
+const int X_SEGMENTS = 20;
 const int R_SEGMENTS = 100;
 //空间参数设置
 const GLfloat PI = 3.14159265358979323846f;
@@ -65,7 +65,7 @@ const float radius_k = 0.5f;//半径系数，用于调节整个圆柱的半径
 const float length_k = 2.0f;//半径系数，用于调节整个圆柱的长度
 float radius[Y_SEGMENTS + 1] = { 0.0f };//半径数组，记录对应segment位置圆柱的半径，用于记录切削效果
 std::vector<float> cylinderVertices;//圆柱点集
-std::vector<int> cylinderIndices;//圆柱点绘制index集
+//std::vector<int> cylinderIndices;//圆柱点绘制index集 <- 改良之后莫得必要
 std::vector<float> cylinderAllData;//圆柱绘制数据集
 
 //切削刀具设置(刀用一个倒四棱锥表示)
@@ -355,7 +355,7 @@ int main()
         cylinderShader.setMat4("view", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model, cylinder_pos);
-        //model = glm::rotate(model, rotate_speed*(float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));//x轴控制轴心自转
+        model = glm::rotate(model, rotate_speed*(float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));//x轴控制轴心自转
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));//让圆柱水平放置
         model = glm::scale(model, glm::vec3(1.0f)); // a smaller cube
         cylinderShader.setMat4("model", model);
@@ -585,7 +585,7 @@ void cylinder_radius_vector_init()
 //caculate the vertex and anormal vec of target cylinder
 void cylinder_data_update()
 {
-    cylinderIndices.clear();
+    //cylinderIndices.clear();
     cylinderVertices.clear();
     cylinderAllData.clear();
     //draw a sphere
@@ -636,12 +636,12 @@ void cylinder_data_update()
             cylinderVertices.push_back(xPos);
             cylinderVertices.push_back(yPos);
             cylinderVertices.push_back(zPos);
-            std::cout << y * (X_SEGMENTS+1) + x << ": " << xPos << " " << yPos << " " << zPos << std::endl;
+            //std::cout << y * (X_SEGMENTS+1) + x << ": " << xPos << " " << yPos << " " << zPos << std::endl;
             //aNormal
 
         }
     }
-    /* 在启用多组属性时，禁用EBO
+    /* 输入EBO <- 在启用多组属性时，禁用
     for (int i = 0; i < Y_SEGMENTS; i++)
     {
         for (int j = 0; j < X_SEGMENTS; j++)
@@ -667,6 +667,7 @@ void cylinder_data_update()
     {
         for (int j = 0; j < X_SEGMENTS; j++)
         {
+            /*
             std::cout << "index order:"
                 << i * (X_SEGMENTS + 1) + j << "   "
                 << (i + 1) * (X_SEGMENTS + 1) + j << "   "
@@ -679,6 +680,7 @@ void cylinder_data_update()
                 << cylinderVertices[3 * ((i + 1) * (X_SEGMENTS + 1) + j)] << cylinderVertices[3 * ((i + 1) * (X_SEGMENTS + 1) + j) + 1] << cylinderVertices[3 * ((i+1) * (X_SEGMENTS + 1) + j) + 2] << "   "
                 << cylinderVertices[3 * ((i + 1) * (X_SEGMENTS + 1) + j+1)] << cylinderVertices[3 * ((i + 1) * (X_SEGMENTS + 1) + j+1) + 1] << cylinderVertices[3 * ((i + 1) * (X_SEGMENTS + 1) + j+1) + 2] << "   "
                 << std::endl;
+            */
             //input first 3 vertics
             float x1 = cylinderVertices[3 * (i * (X_SEGMENTS + 1) + j)];
             float y1 = cylinderVertices[3 * (i * (X_SEGMENTS + 1) + j)+1];
@@ -712,7 +714,7 @@ void cylinder_data_update()
                 glm::vec3 AC(x3 - x1, y3 - y1, z3 - z1);
                 normal = glm::normalize(glm::cross(AB, AC));
             }
-            std::cout << "the normal:" << normal.x << normal.y << normal.z <<endl;
+            //std::cout << "the normal:" << normal.x << normal.y << normal.z <<endl;
             cylinderAllData.push_back(x1);
             cylinderAllData.push_back(y1);
             cylinderAllData.push_back(z1);
@@ -749,7 +751,7 @@ void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO)
     //将顶点数据绑定至当前默认的缓冲中
     glBufferData(GL_ARRAY_BUFFER, cylinderAllData.size() * sizeof(float), &cylinderAllData[0], GL_STATIC_DRAW);
 
-    //EBO,改良之后并不需要这一步
+    //EBO  <- 改良之后并不需要这一步
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_object);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, cylinderIndices.size() * sizeof(int), &cylinderIndices[0], GL_STATIC_DRAW);
 
@@ -757,8 +759,8 @@ void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    //解绑VAO和VBO
+    //解绑VAO和VBO <- 没必要
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     //glBindVertexArray(0);
-    std::cout << "Did here" << endl;
+    //std::cout << "Did here" << endl;
 }
