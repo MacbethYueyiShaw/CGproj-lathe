@@ -55,7 +55,7 @@ float lastFrame = 0.0f;
 // cylinder data config
 //点阵精细度设置
 const int Y_SEGMENTS = 200;
-const int X_SEGMENTS = 100;
+const int X_SEGMENTS = 40;
 const int R_SEGMENTS = 100;
 //空间参数设置
 const GLfloat PI = 3.14159265358979323846f;
@@ -76,15 +76,26 @@ float knife_distance = 1.0f;
 
 //材质表 取自http://www.it.hiof.no/~borres/j3d/explain/light/p-materials.html
 //silver
-const glm::vec3 silver_ambient(0.23125f, 0.23125f, 0.23125f);
-const glm::vec3 silver_diffused(0.2775f, 0.2775f, 0.2775f);
-const glm::vec3 silver_specular(0.773911f, 0.773911f, 0.773911f);
-const float silver_shine = 89.6f;
+const glm::vec3 silver_ambient(0.19225f, 0.19225f, 0.19225f);
+const glm::vec3 silver_diffused(0.50754f, 0.50754f, 0.50754f);
+const glm::vec3 silver_specular(0.508273f, 0.508273f, 0.508273f);
+const float silver_shine = 51.2f;
+//silver polished
+const glm::vec3 silverPolished_ambient(0.23125f, 0.23125f, 0.23125f);
+const glm::vec3 silverPolished_diffused(0.2775f, 0.2775f, 0.2775f);
+const glm::vec3 silverPolished_specular(0.773911f, 0.773911f, 0.773911f);
+const float silverPolished_shine = 89.6f;
 //log 木头这个的没找到，自己编了一个
-const glm::vec3 log_ambient(0.25f, 0.20725f, 0.20725f);
-const glm::vec3 log_diffused(0.9f, 0.729f, 0.729f);
-const glm::vec3 log_specular(0.296648f, 0.296648f, 0.296648f);
-const float log_shine = 11.264f;
+const glm::vec3 log_ambient(0.15f, 0.10725f, 0.10725f);
+const glm::vec3 log_diffused(0.7f, 0.529f, 0.529f);
+const glm::vec3 log_specular(0.196648f, 0.196648f, 0.196648f);
+const float log_shine = 5.264f;
+//log 切过的木头
+const glm::vec3 logPolished_ambient(0.25f, 0.20725f, 0.20725f);
+const glm::vec3 logPolished_diffused(0.9f, 0.729f, 0.729f);
+const glm::vec3 logPolished_specular(0.296648f, 0.296648f, 0.296648f);
+const float logPolished_shine = 11.264f;
+
 //tin
 const glm::vec3 tin_ambient( 0.105882f, 0.058824f, 0.113725f );
 const glm::vec3 tin_diffuse( 0.427451f, 0.470588f, 0.541176f );
@@ -385,10 +396,10 @@ int main()
         // material properties
         if (material_switch)
         {
-            cylinderShader.setVec3("material.ambient", silver_ambient);
-            cylinderShader.setVec3("material.diffuse", silver_diffused);
-            cylinderShader.setVec3("material.specular",silver_specular);
-            cylinderShader.setFloat("material.shininess", silver_shine);
+            cylinderShader.setVec3("material.ambient", silverPolished_ambient);
+            cylinderShader.setVec3("material.diffuse", silverPolished_diffused);
+            cylinderShader.setVec3("material.specular", silverPolished_specular);
+            cylinderShader.setFloat("material.shininess", silverPolished_shine);
         }
         else
         {
@@ -783,6 +794,12 @@ void cylinder_data_update()
                 normal = glm::normalize(glm::cross(AB, AC));
             }
             //std::cout << "the normal:" << normal.x << normal.y << normal.z <<endl;
+            float polished_bit = 0.5f;
+            if (radius[i]<1.0f)
+            {
+                polished_bit = 1.0f;
+            }
+            //std::cout << "the polished_bit:" << polished_bit <<endl;
             cylinderAllData.push_back(x1);
             cylinderAllData.push_back(y1);
             cylinderAllData.push_back(z1);
@@ -790,6 +807,7 @@ void cylinder_data_update()
             cylinderAllData.push_back(normal.x);
             cylinderAllData.push_back(normal.y);
             cylinderAllData.push_back(normal.z);
+            cylinderAllData.push_back(polished_bit);
 
             cylinderAllData.push_back(x2);
             cylinderAllData.push_back(y2);
@@ -798,6 +816,7 @@ void cylinder_data_update()
             cylinderAllData.push_back(normal.x);
             cylinderAllData.push_back(normal.y);
             cylinderAllData.push_back(normal.z);
+            cylinderAllData.push_back(polished_bit);
 
             cylinderAllData.push_back(x3);
             cylinderAllData.push_back(y3);
@@ -806,6 +825,7 @@ void cylinder_data_update()
             cylinderAllData.push_back(normal.x);
             cylinderAllData.push_back(normal.y);
             cylinderAllData.push_back(normal.z);
+            cylinderAllData.push_back(polished_bit);
 
             cylinderAllData.push_back(x4);
             cylinderAllData.push_back(y4);
@@ -814,6 +834,7 @@ void cylinder_data_update()
             cylinderAllData.push_back(normal.x);
             cylinderAllData.push_back(normal.y);
             cylinderAllData.push_back(normal.z);
+            cylinderAllData.push_back(polished_bit);
 
             cylinderAllData.push_back(x5);
             cylinderAllData.push_back(y5);
@@ -822,6 +843,7 @@ void cylinder_data_update()
             cylinderAllData.push_back(normal.x);
             cylinderAllData.push_back(normal.y);
             cylinderAllData.push_back(normal.z);
+            cylinderAllData.push_back(polished_bit);
 
             cylinderAllData.push_back(x6);
             cylinderAllData.push_back(y6);
@@ -830,6 +852,7 @@ void cylinder_data_update()
             cylinderAllData.push_back(normal.x);
             cylinderAllData.push_back(normal.y);
             cylinderAllData.push_back(normal.z);
+            cylinderAllData.push_back(polished_bit);
         }
     }
 }
@@ -848,10 +871,12 @@ void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO)
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, cylinderIndices.size() * sizeof(int), &cylinderIndices[0], GL_STATIC_DRAW);
 
     //设置顶点属性指针
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     //解绑VAO和VBO <- 没必要
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
