@@ -59,8 +59,8 @@ float lastFrame = 0.0f;
 
 // cylinder data config
 //点阵精细度设置
-const int Y_SEGMENTS = 200;
-const int X_SEGMENTS = 10;
+const int Y_SEGMENTS = 400;
+const int X_SEGMENTS = 50;
 const int R_SEGMENTS = 100;
 //空间参数设置
 const GLfloat PI = 3.14159265358979323846f;

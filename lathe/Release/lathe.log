@@ -1,0 +1,22 @@
+﻿  lathe.cpp
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\include\shader.h(56,40): warning C4101: “e”: 未引用的局部变量
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\include\particlesystem2.h(67,13): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\include\particlesystem2.h(74,14): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\include\particlesystem2.h(93,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\include\particlesystem2.h(109,20): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(444,28): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(696,23): warning C4018: “<”: 有符号/无符号不匹配
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(730,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(731,17): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(735,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(736,19): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(738,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(739,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(799,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(1146,19): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
+  正在生成代码
+  7 of 966 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    9 functions had inline decision re-evaluated but remain unchanged
+  已完成代码的生成
+  lathe.vcxproj -> C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Release\lathe.exe
