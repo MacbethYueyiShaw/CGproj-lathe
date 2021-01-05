@@ -59,8 +59,8 @@ float lastFrame = 0.0f;
 // cylinder data config
 //点阵精细度设置
 const int Y_SEGMENTS = 400;
-const int X_SEGMENTS = 10;
-const int R_SEGMENTS = 200;
+const int X_SEGMENTS = 30;
+const int R_SEGMENTS = 100;
 //空间参数设置
 const GLfloat PI = 3.14159265358979323846f;
 //const glm::vec3 cylinder_pos=glm::vec3(-2.0f, 5.0f, -0.5f);//空间位置
@@ -1021,8 +1021,8 @@ void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO)
 void bezier_mode()
 {
     std::cout << "计算bezier曲线，请按顺序依次输入四个点的数据，请务必保证：" << std::endl
-        << "x范围在0~" << Y_SEGMENTS << std::endl
-        << "y范围在0~" << Y_SEGMENTS/8 << std::endl;
+        << "x范围在-1.0f~" << 1.0f << std::endl
+        << "y范围在-1.0f~" << 1.0f << std::endl;
     std::cout << "A.x:" << std::endl;
     std::cin >> A.x;
     std::cout << "A.y:" << std::endl;
@@ -1056,19 +1056,33 @@ void bezier_caculate()
     std::cout << D.y << std::endl;
     */
 
-    GLfloat ps[11][2];
+    float ps[Y_SEGMENTS+1][2];
 
-    GLint i = 0;
-    for (double t = 0.0; t <= 1.0; t += 0.1)
+    int i = 0;
+    for (float t = 0.0f; t <= 1.0f; t += 1.0f/Y_SEGMENTS)
     {
 
-        double a1 = pow((1 - t), 3);
-        double a2 = pow((1 - t), 2) * 3 * t;
-        double a3 = 3 * t * t * (1 - t);
-        double a4 = t * t * t;
-        ps[i][0] = a1 * A[0] + a2 * B[0] + a3 * C[0] + a4 * D[0];
-        ps[i][1] = a1 * A[1] + a2 * B[1] + a3 * C[1] + a4 * D[1];
+        float a1 = pow((1.0f - t), 3);
+        float a2 = pow((1.0f - t), 2) * 3 * t;
+        float a3 = 3.0f * t * t * (1.0f - t);
+        float a4 = t * t * t;
+        ps[i][0] = a1 * A.x + a2 * B.x + a3 * C.x + a4 * D.x;
+        ps[i][1] = a1 * A.y + a2 * B.y + a3 * C.y + a4 * D.y;
+        //std::cout << i << " "<< ps[i][0] << " " << ps[i][1] << std::endl;
         i = i + 1;
-        std::cout << ps[i][0]<<" "<< ps[i][1] << std::endl;
     }
+    ps[Y_SEGMENTS][0] = D.x;
+    ps[Y_SEGMENTS][1] = D.y;
+    //std::cout << ps[Y_SEGMENTS][0] << " " << ps[Y_SEGMENTS][1] << std::endl;
+
+    for (int i = 0; i <= Y_SEGMENTS; i++)
+    {
+        int index = (ps[i][0] + 1.0f) * Y_SEGMENTS / 2;
+        float bezier_radius = (ps[i][1] + 1.0f) / 2.0f;
+        if (radius[index] > bezier_radius)
+        {
+            radius[index] = bezier_radius;
+        }
+    }
+    cylinder_data_update(0.0f);
 }

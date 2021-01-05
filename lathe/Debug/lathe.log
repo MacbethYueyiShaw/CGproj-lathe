@@ -13,6 +13,5 @@ C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(726,19): warning C424
 C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(728,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
 C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(729,13): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
 C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(738,31): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(1069,93): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
-C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(1070,114): warning C4244: “=”: 从“double”转换到“GLfloat”，可能丢失数据
+C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\lathe.cpp(1080,19): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
   lathe.vcxproj -> C:\Users\Macbeth\workspace\cg\CGproj-lathe\lathe\Debug\lathe.exe
