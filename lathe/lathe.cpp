@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+#include <fstream>
 #include <math.h>
 #include <vector>
 #include "include/shader.h"
@@ -27,6 +28,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 void game_reset();
+void print_vertics();
 //shader func: draw meshes
 void skybox_draw(Shader skyboxShader, unsigned int skyboxVAO, unsigned int cubemapTexture);
 void model_draw(Shader shader, Model mymodel, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotate_axe = glm::vec3(0.0f, 1.0f, 0.0f), float radians = 0.0f);
@@ -54,9 +56,9 @@ float lastFrame = 0.0f;
 
 // cylinder data config
 //点阵精细度设置
-const int Y_SEGMENTS = 200;
+const int Y_SEGMENTS = 400;
 const int X_SEGMENTS = 10;
-const int R_SEGMENTS = 100;
+const int R_SEGMENTS = 200;
 //空间参数设置
 const GLfloat PI = 3.14159265358979323846f;
 //const glm::vec3 cylinder_pos=glm::vec3(-2.0f, 5.0f, -0.5f);//空间位置
@@ -654,6 +656,11 @@ void processInput(GLFWwindow* window)
         game_reset();
         return;
     }
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+        print_vertics();
+        return;
+    }
+
 }
 //reset game
 void game_reset()
@@ -662,6 +669,24 @@ void game_reset()
     knife_pos = knife_pos_reset;
     cylinder_radius_vector_init();
     cylinder_data_update(0.0f);
+}
+
+//print current vertics
+void print_vertics()
+{
+    ofstream outfile;
+    outfile.open("data.dat", ios::out | ios::trunc);
+    for (int i = 0; i < cylinderAllData.size() ; i += 7)
+    {
+        outfile << cylinderAllData[i] << " ";
+        outfile << cylinderAllData[i+1] << " ";
+        outfile << cylinderAllData[i+2] << " ";
+        outfile << cylinderAllData[i+3] << " ";
+        outfile << cylinderAllData[i+4] << " ";
+        outfile << cylinderAllData[i+5] << " ";
+        outfile << cylinderAllData[i + 6] << std::endl;
+    }
+    outfile.close();
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
