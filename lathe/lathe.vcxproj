@@ -168,7 +168,6 @@
   <ItemGroup>
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\model.h" />
-    <ClInclude Include="include\ParticleSystem.h" />
     <ClInclude Include="include\particlesystem2.h" />
     <ClInclude Include="include\shader.h" />
     <ClInclude Include="include\skybox.h" />

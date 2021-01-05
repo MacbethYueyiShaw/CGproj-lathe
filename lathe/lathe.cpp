@@ -25,6 +25,7 @@ Time: Dec/2020
 //tool func: global setting and control
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void mouse_button_callback(GLFWwindow* window, int button, int action,int mods);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 void game_reset();
@@ -36,7 +37,7 @@ void model_draw(Shader shader, Model mymodel, glm::vec3 position = glm::vec3(0.0
 void cylinder_radius_vector_init();
 void cylinder_data_update(float mount);
 void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO);
-void bezier_mode();
+void bezier_mode(GLFWwindow* window);
 void bezier_caculate();
 ///////////////////////////////////////////GLOBAL VALUE/////////////////////////////////////////////
 // settings
@@ -58,7 +59,7 @@ float lastFrame = 0.0f;
 
 // cylinder data config
 //点阵精细度设置
-const int Y_SEGMENTS = 500;
+const int Y_SEGMENTS = 200;
 const int X_SEGMENTS = 10;
 const int R_SEGMENTS = 100;
 //空间参数设置
@@ -113,6 +114,8 @@ bool material_switch = 0; //0:wood , 1:silver
 ParticleSystem particlesystem;
 
 //Bezier
+bool bezier_on = false;
+int selected_point = 0;
 glm::vec2 A;
 glm::vec2 B;
 glm::vec2 C;
@@ -146,6 +149,7 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -670,7 +674,7 @@ void processInput(GLFWwindow* window)
         return;
     }
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-        bezier_mode();
+        bezier_mode(window);
         return;
     }
 
@@ -715,6 +719,12 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
+    if (bezier_on)
+    {
+        //std::cout << "mouse_x:" << xpos << "  mouse_y:" << ypos << std::endl;
+        return;
+    }
+
     if (firstMouse)
     {
         lastX = xpos;
@@ -729,6 +739,57 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     lastY = ypos;
 
     camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (!bezier_on)
+    {
+        return;
+    }
+
+    double clickPointX, clickPointY;
+    if (action == GLFW_PRESS) switch(button)
+    {
+    case GLFW_MOUSE_BUTTON_LEFT:
+        glfwGetCursorPos(window, &clickPointX, &clickPointY); {
+            //std::cout << "click : mouse_x:" << clickPointX << "  mouse_y:" << clickPointY << std::endl;
+            switch (selected_point)
+            {
+            case 0: {
+                A.x = -(float)((clickPointX - SCR_WIDTH / 2.0f) / (SCR_WIDTH/2.0f));
+                A.y = -(float)((clickPointY - SCR_HEIGHT / 2.0f) / (SCR_HEIGHT / 2.0f));
+                selected_point++;
+                break;
+            }
+            case 1: {
+                B.x = -(float)((clickPointX - SCR_WIDTH / 2.0f) / (SCR_WIDTH / 2.0f));
+                B.y = -(float)((clickPointY - SCR_HEIGHT / 2.0f) / (SCR_HEIGHT / 2.0f));
+                selected_point++;
+                break;
+            }
+            case 2: {
+                C.x = -(float)((clickPointX - SCR_WIDTH / 2.0f) / (SCR_WIDTH / 2.0f));
+                C.y = -(float)((clickPointY - SCR_HEIGHT / 2.0f) / (SCR_HEIGHT / 2.0f));
+                selected_point++;
+                break;
+            }
+            case 3: {
+                D.x = -(float)((clickPointX - SCR_WIDTH / 2.0f) / (SCR_WIDTH / 2.0f));
+                D.y = -(float)((clickPointY - SCR_HEIGHT / 2.0f) / (SCR_HEIGHT / 2.0f));
+                selected_point++;
+                break;
+            }
+            }
+        }
+    }
+    if (selected_point==4)
+    {
+        selected_point = 0;
+        bezier_on = false;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        bezier_caculate();
+    }
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -1018,11 +1079,13 @@ void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO)
 }
 
 //access bezier
-void bezier_mode()
+void bezier_mode(GLFWwindow* window)
 {
+    /*
     std::cout << "计算bezier曲线，请按顺序依次输入四个点的数据，请务必保证：" << std::endl
         << "x范围在-1.0f~" << 1.0f << std::endl
         << "y范围在-1.0f~" << 1.0f << std::endl;
+   
     std::cout << "A.x:" << std::endl;
     std::cin >> A.x;
     std::cout << "A.y:" << std::endl;
@@ -1039,13 +1102,16 @@ void bezier_mode()
     std::cin >> D.x;
     std::cout << "D.y:" << std::endl;
     std::cin >> D.y;
-    bezier_caculate();
+    */
+    bezier_on = true;
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    //bezier_caculate();
 }
 
 //caculate and apply data
 void bezier_caculate()
 {
-    /*
+    
     std::cout << A.x << std::endl;
     std::cout << A.y << std::endl;
     std::cout << B.x << std::endl;
@@ -1054,7 +1120,7 @@ void bezier_caculate()
     std::cout << C.y << std::endl;
     std::cout << D.x << std::endl;
     std::cout << D.y << std::endl;
-    */
+    
 
     float ps[Y_SEGMENTS+1][2];
 
