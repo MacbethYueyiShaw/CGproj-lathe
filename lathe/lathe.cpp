@@ -36,6 +36,8 @@ void model_draw(Shader shader, Model mymodel, glm::vec3 position = glm::vec3(0.0
 void cylinder_radius_vector_init();
 void cylinder_data_update(float mount);
 void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO);
+void bezier_mode();
+void bezier_caculate();
 ///////////////////////////////////////////GLOBAL VALUE/////////////////////////////////////////////
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -109,6 +111,13 @@ bool material_switch = 0; //0:wood , 1:silver
 
 //particle system
 ParticleSystem particlesystem;
+
+//Bezier
+glm::vec2 A;
+glm::vec2 B;
+glm::vec2 C;
+glm::vec2 D;
+
 
 ////////////////////////////////////////////////MAIN/////////////////////////////////////////////////
 int main()
@@ -660,6 +669,10 @@ void processInput(GLFWwindow* window)
         print_vertics();
         return;
     }
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        bezier_mode();
+        return;
+    }
 
 }
 //reset game
@@ -1002,4 +1015,60 @@ void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO)
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
     //glBindVertexArray(0);
     //std::cout << "Did here" << endl;
+}
+
+//access bezier
+void bezier_mode()
+{
+    std::cout << "计算bezier曲线，请按顺序依次输入四个点的数据，请务必保证：" << std::endl
+        << "x范围在0~" << Y_SEGMENTS << std::endl
+        << "y范围在0~" << Y_SEGMENTS/8 << std::endl;
+    std::cout << "A.x:" << std::endl;
+    std::cin >> A.x;
+    std::cout << "A.y:" << std::endl;
+    std::cin >> A.y;
+    std::cout << "B.x:" << std::endl;
+    std::cin >> B.x;
+    std::cout << "B.y:" << std::endl;
+    std::cin >> B.y;
+    std::cout << "C.x:" << std::endl;
+    std::cin >> C.x;
+    std::cout << "C.y:" << std::endl;
+    std::cin >> C.y;
+    std::cout << "D.x:" << std::endl;
+    std::cin >> D.x;
+    std::cout << "D.y:" << std::endl;
+    std::cin >> D.y;
+    bezier_caculate();
+}
+
+//caculate and apply data
+void bezier_caculate()
+{
+    /*
+    std::cout << A.x << std::endl;
+    std::cout << A.y << std::endl;
+    std::cout << B.x << std::endl;
+    std::cout << B.y << std::endl;
+    std::cout << C.x << std::endl;
+    std::cout << C.y << std::endl;
+    std::cout << D.x << std::endl;
+    std::cout << D.y << std::endl;
+    */
+
+    GLfloat ps[11][2];
+
+    GLint i = 0;
+    for (double t = 0.0; t <= 1.0; t += 0.1)
+    {
+
+        double a1 = pow((1 - t), 3);
+        double a2 = pow((1 - t), 2) * 3 * t;
+        double a3 = 3 * t * t * (1 - t);
+        double a4 = t * t * t;
+        ps[i][0] = a1 * A[0] + a2 * B[0] + a3 * C[0] + a4 * D[0];
+        ps[i][1] = a1 * A[1] + a2 * B[1] + a3 * C[1] + a4 * D[1];
+        i = i + 1;
+        std::cout << ps[i][0]<<" "<< ps[i][1] << std::endl;
+    }
 }
