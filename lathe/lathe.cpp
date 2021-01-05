@@ -12,7 +12,7 @@
 #include "include/model.h"
 #include "include/camera.h"
 #include "include/skybox.h"
-
+#include "include/particlesystem2.h"
 /*
 Proj:A Lathe Simulator by openGL
 Author: Macbeth Yueyi Shaw
@@ -32,7 +32,7 @@ void skybox_draw(Shader skyboxShader, unsigned int skyboxVAO, unsigned int cubem
 void model_draw(Shader shader, Model mymodel, glm::vec3 position = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f), glm::vec3 rotate_axe = glm::vec3(0.0f, 1.0f, 0.0f), float radians = 0.0f);
 //model caculate func
 void cylinder_radius_vector_init();
-void cylinder_data_update();
+void cylinder_data_update(float mount);
 void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO);
 ///////////////////////////////////////////GLOBAL VALUE/////////////////////////////////////////////
 // settings
@@ -55,7 +55,7 @@ float lastFrame = 0.0f;
 // cylinder data config
 //点阵精细度设置
 const int Y_SEGMENTS = 200;
-const int X_SEGMENTS = 40;
+const int X_SEGMENTS = 10;
 const int R_SEGMENTS = 100;
 //空间参数设置
 const GLfloat PI = 3.14159265358979323846f;
@@ -104,6 +104,9 @@ float tin_shine =11.264f;
 
 //设置开关
 bool material_switch = 0; //0:wood , 1:silver
+
+//particle system
+ParticleSystem particlesystem;
 
 ////////////////////////////////////////////////MAIN/////////////////////////////////////////////////
 int main()
@@ -162,6 +165,7 @@ int main()
     Shader skyboxShader("./shaders/6.1.skybox.vs", "./shaders/6.1.skybox.fs");
     Shader cylinderShader("./shaders/cylinder.vs", "./shaders/cylinder.fs");
     Shader knifeShader("./shaders/knife.vs", "./shaders/knife.fs");
+    Shader dustShader("./shaders/dust.vs", "./shaders/dust.fs");
     // load models
     // -----------
     //Model ourModel("./resources/objects/nanosuit/nanosuit.obj");
@@ -170,6 +174,49 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
+    float dust_vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+    };
     float light_vertices[] = {
        -0.5f, -0.5f, -0.5f,
         0.5f, -0.5f, -0.5f,
@@ -282,7 +329,7 @@ int main()
         0.0f,-1.0f,0.0f,0.0f,-1.0f,-1.0f,
     };
     cylinder_radius_vector_init();//初始化半径集合
-    cylinder_data_update();//依据radius集合生成cylinder点阵数据集，必须在init之后
+    cylinder_data_update(0.0f);//依据radius集合生成cylinder点阵数据集，必须在init之后
     
     ////////////////////////////////////////////BIND VAO/VBO/EBO//////////////////////////////////////////////
     // skybox VAO
@@ -343,6 +390,23 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    // first, configure the cube's VAO (and VBO)
+    unsigned int dustVAO;
+    glGenVertexArrays(1, &dustVAO);
+    glGenBuffers(1, &VBO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(dust_vertices), dust_vertices, GL_STATIC_DRAW);
+
+    glBindVertexArray(dustVAO);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
     /*cylinder数据处理*/
     unsigned int cylinderVBO, cylinderVAO;
     /*culinder数据处理*/
@@ -351,6 +415,9 @@ int main()
     //GLuint element_buffer_object;//EBO
     //glGenBuffers(1, &element_buffer_object);
     //cylinder_buffer_update(cylinderVAO, cylinderVBO);
+
+    // ParticleSystem
+
 
     ///////////////////////////////////////////////SHADING/////////////////////////////////////////////////
     // render loop
@@ -464,6 +531,30 @@ int main()
         //draw skybox
         skybox_draw(skyboxShader,skyboxVAO, cubemapTexture);
 
+        //particlesystem draw
+        particlesystem.update(deltaTime);
+        dustShader.use();
+        dustShader.setVec3("light.ambient", ambientColor);
+        dustShader.setVec3("light.diffuse", diffuseColor);
+        dustShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+        dustShader.setVec3("light.position", lightPos);
+        dustShader.setVec3("viewPos", camera.Position);
+        if (material_switch)
+        {
+            dustShader.setVec3("material.ambient", silverPolished_ambient);
+            dustShader.setVec3("material.diffuse", silverPolished_diffused);
+            dustShader.setVec3("material.specular", silverPolished_specular);
+            dustShader.setFloat("material.shininess", silverPolished_shine);
+        }
+        else
+        {
+            dustShader.setVec3("material.ambient", log_ambient);
+            dustShader.setVec3("material.diffuse", log_diffused);
+            dustShader.setVec3("material.specular", log_specular);
+            dustShader.setFloat("material.shininess", log_shine);
+        }
+        particlesystem.draw_particles(dustShader, dustVAO, projection, view, lightPos);
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -476,6 +567,7 @@ int main()
     glDeleteVertexArrays(1, &skyboxVAO);
     glDeleteVertexArrays(1, &lightCubeVAO);
     glDeleteVertexArrays(1, &knifeVAO);
+    glDeleteVertexArrays(1, &dustVAO);
     glDeleteBuffers(1, &knifeVBO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &skyboxVBO);
@@ -530,8 +622,9 @@ void processInput(GLFWwindow* window)
             //std::cout << "distance: " << knife_distance << "    x_seg: " << x_seg << "    radius[x_seg]: " << radius[x_seg] << std::endl;
             if (radius[x_seg]>knife_distance)
             {
+                float mount = radius[x_seg] - knife_distance;
                 radius[x_seg] = knife_distance;
-                cylinder_data_update();
+                cylinder_data_update(mount);
             }
         }   
     }
@@ -543,8 +636,9 @@ void processInput(GLFWwindow* window)
             //std::cout << "distance: " << knife_distance << "    x_seg: " << x_seg << "    radius[x_seg]: " << radius[x_seg] << std::endl;
             if (radius[x_seg] > knife_distance)
             {
+                float mount = radius[x_seg] - knife_distance;
                 radius[x_seg] = knife_distance;
-                cylinder_data_update();
+                cylinder_data_update(mount);
             }
         }
     }
@@ -567,7 +661,7 @@ void game_reset()
     knife_distance = 1.0f;
     knife_pos = knife_pos_reset;
     cylinder_radius_vector_init();
-    cylinder_data_update();
+    cylinder_data_update(0.0f);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -662,7 +756,7 @@ void cylinder_radius_vector_init()
     }
 }
 //caculate the vertex and anormal vec of target cylinder
-void cylinder_data_update()
+void cylinder_data_update(float mount)
 {
     //cylinderIndices.clear();
     cylinderVertices.clear();
@@ -855,6 +949,7 @@ void cylinder_data_update()
             cylinderAllData.push_back(polished_bit);
         }
     }
+    particlesystem.create_particles(knife_pos,mount);
 }
 //update cylinder's VAO,VBO,EBO
 void cylinder_buffer_update(unsigned int cylinderVAO, unsigned int cylinderVBO)

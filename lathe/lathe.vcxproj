@@ -156,12 +156,22 @@
     <None Include="shaders\6.1.skybox.vs" />
     <None Include="shaders\cylinder.fs" />
     <None Include="shaders\cylinder.vs" />
+    <None Include="shaders\dust.fs" />
+    <None Include="shaders\dust.vs" />
     <None Include="shaders\fs.shader" />
     <None Include="shaders\knife.fs" />
     <None Include="shaders\knife.vs" />
     <None Include="shaders\light_cube.fs" />
     <None Include="shaders\light_cube.vs" />
     <None Include="shaders\vs.shader" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\camera.h" />
+    <ClInclude Include="include\model.h" />
+    <ClInclude Include="include\ParticleSystem.h" />
+    <ClInclude Include="include\particlesystem2.h" />
+    <ClInclude Include="include\shader.h" />
+    <ClInclude Include="include\skybox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
