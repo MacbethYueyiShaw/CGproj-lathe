@@ -58,8 +58,8 @@ float lastFrame = 0.0f;
 
 // cylinder data config
 //点阵精细度设置
-const int Y_SEGMENTS = 400;
-const int X_SEGMENTS = 30;
+const int Y_SEGMENTS = 500;
+const int X_SEGMENTS = 10;
 const int R_SEGMENTS = 100;
 //空间参数设置
 const GLfloat PI = 3.14159265358979323846f;
@@ -462,7 +462,7 @@ int main()
         glm::vec3 ambientColor = diffuseColor * glm::vec3(1.0f); // low influence
 
         //draw lathe
-        //model_draw(ourShader,ourModel, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.1f), glm::vec3(1.0f, 0.0f, 0.0f), -90.0f);
+        model_draw(ourShader,ourModel, glm::vec3(2.5f, -5.0f, 0.5f), glm::vec3(0.1f), glm::vec3(1.0f, 0.0f, 0.0f), -90.0f);
 
         //draw cylinder
         cylinderShader.use();
